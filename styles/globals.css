@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@plugin '../hero.ts';
+
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "font", sans-serif;
+  --font-mono: "monospace", monospace;
+}
+
+/* The Lost Scroll: simple animations (no custom colors) */
+
+.ls-route path {
+  animation: ls-dash 10s linear infinite;
+}
+
+@keyframes ls-dash {
+  to {
+    stroke-dashoffset: +220;
+  }
+}
+
+.ls-float-1 {
+  animation: ls-float 4.8s ease-in-out infinite;
+}
+
+.ls-float-2 {
+  animation: ls-float 5.8s ease-in-out infinite;
+  animation-delay: -1.3s;
+}
+
+.ls-float-3 {
+  animation: ls-float 6.6s ease-in-out infinite;
+  animation-delay: -2.1s;
+}
+
+@keyframes ls-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.ls-shake {
+  animation: ls-shake 240ms ease-in-out 0s 2;
+}
+
+@keyframes ls-shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.ls-reveal {
+  animation: ls-reveal 260ms ease-out both;
+}
+
+@keyframes ls-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ls-loader-pop {
+  animation: ls-loader-pop 420ms cubic-bezier(0.2, 1, 0.2, 1) both;
+}
+
+.ls-loader-exit {
+  animation: ls-loader-exit 220ms ease-in both;
+}
+
+@keyframes ls-loader-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.78);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(0) scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ls-loader-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(2px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ls-route path,
+  .ls-float-1,
+  .ls-float-2,
+  .ls-float-3,
+  .ls-shake,
+  .ls-reveal,
+  .ls-loader-pop,
+  .ls-loader-exit {
+    animation: none !important;
+  }
+}
