@@ -282,8 +282,8 @@ export default function IndexPage() {
         setClue3("");
         window.location.reload();
       }, 10000);
-    } catch {
-      setError("Unable to verify password. Try again.");
+    } catch (err) {
+      setError("Unable to verify code. Try again.");
     }
   }
 
@@ -389,10 +389,10 @@ export default function IndexPage() {
                   aria-label="Password"
                   classNames={{
                     input:
-                      "text-black !text-black placeholder:text-black bold text-[20px] caret-black",
+                      "text-black !text-black placeholder:text-black bold text-[20px] caret-black justify-center text-center",
                     inputWrapper:
-                      "bg-transparent border-black/60 data-[hover=true]:bg-transparent data-[hover=true]:border-black group-data-[focus=true]:bg-transparent group-data-[focus=true]:border-black after:bg-black",
-                    errorMessage: "text-black",
+                      "justify-center text-center bg-transparent border-black/60 data-[hover=true]:bg-transparent data-[hover=true]:border-black group-data-[focus=true]:bg-transparent group-data-[focus=true]:border-black after:bg-black",
+                    errorMessage: "text-black justify-center text-center",
                   }}
                   errorMessage={error ?? undefined}
                   isInvalid={Boolean(error)}
@@ -401,7 +401,7 @@ export default function IndexPage() {
                   }}
                   onValueChange={setPassword}
                   placeholder="Input Code Here"
-                  type="password"
+                  type="text"
                   value={password}
                   variant="underlined"
                 />
