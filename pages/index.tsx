@@ -406,24 +406,26 @@ export default function IndexPage() {
                   variant="underlined"
                 />
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div
-                className={
-                  "text-center text-black " +
-                  (unlocked ? "ls-reveal" : "opacity-0 pointer-events-none")
-                }
-                aria-hidden={!unlocked}
-              >
-                <div className="text-[18px] mt-4 text-black whitespace-pre-line">
-                  {clue}
-                </div>
-                <div className="text-[18px] text-black whitespace-pre-line">
-                  {clue2}
-                </div>
-                <div className="text-[18px] mt-1 text-black whitespace-pre-line">
-                  {clue3}
-                </div>
-              </div>
+        <div className="absolute right-25 top-100 z-20 w-full max-w-md px-0 pointer-events-none">
+          <div
+            className={
+              "text-center justify-center text-black " +
+              (unlocked ? "ls-reveal" : "opacity-0 pointer-events-none")
+            }
+            aria-hidden={!unlocked}
+          >
+            <div className="text-[24px] text-black whitespace-pre-line">
+              {clue}
+            </div>
+            <div className="text-[24px] mt-3 text-black whitespace-pre-line">
+              {clue2}
+            </div>
+            <div className="text-[24px] mt-20 text-black whitespace-pre-line">
+              {clue3}
             </div>
           </div>
         </div>
