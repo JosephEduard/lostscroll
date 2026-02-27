@@ -414,7 +414,7 @@ export default function IndexPage() {
                 }
                 aria-hidden={!unlocked}
               >
-                <div className="text-[18px] text-black whitespace-pre-line">
+                <div className="text-[18px] mt-4 text-black whitespace-pre-line">
                   {clue}
                 </div>
                 <div className="text-[18px] text-black whitespace-pre-line">
