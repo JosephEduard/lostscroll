@@ -48,7 +48,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
             height="14"
             rx="2"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
           />
         </svg>
       );
@@ -58,7 +58,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M12 3.2l2.35 5.06 5.55.53-4.18 3.62 1.25 5.37L12 15.9 7.03 17.8l1.25-5.37L4.1 8.8l5.55-.53L12 3.2z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -69,7 +69,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M12 5l8 14H4L12 5z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -80,7 +80,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M7 7h10l3 12H4L7 7z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -93,7 +93,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
             cy="12"
             r="7"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
           />
         </svg>
       );
@@ -103,7 +103,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M12 4l7 8-7 8-7-8 7-8z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -114,7 +114,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M8 4h8l4 8-4 8H8l-4-8 4-8z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -136,7 +136,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
           <path
             d="M12 4l7 5-2.7 10H7.7L5 9l7-5z"
             className="fill-current text-black stroke-current"
-            strokeWidth="1.5"
+            strokeWidth="4"
             strokeLinejoin="round"
           />
         </svg>
@@ -147,7 +147,6 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
       const petalRadius = 0.75;
       const petals = Array.from({ length: petalCount }, (_, i) => {
         const angle = (i * 2 * Math.PI) / petalCount;
-
         return {
           cx: 12 + Math.cos(angle) * ringRadius,
           cy: 12 + Math.sin(angle) * ringRadius,
@@ -182,10 +181,10 @@ export default function IndexPage() {
       // Tuned to the actual PNG size: 2752 x 1536
       // These points align to the black reference dots on the map image.
       { id: "cross", shape: "Cross", x: 2020, y: 370 },
-      { id: "triangle", shape: "Triangle", x: 1780, y: 680 },
-      { id: "flower", shape: "Flower", x: 1580, y: 920 },
-      { id: "star", shape: "Star", x: 1300, y: 990 },
-      { id: "circle", shape: "Circle", x: 1000, y: 1000 },
+      { id: "diamond", shape: "Diamond", x: 1780, y: 680 },
+      { id: "circle", shape: "Circle", x: 1580, y: 920 },
+      { id: "triangle", shape: "Triangle", x: 1300, y: 990 },
+      { id: "star", shape: "Star", x: 1000, y: 1000 },
       { id: "square", shape: "Square", x: 750, y: 1060 },
     ],
     [],
@@ -200,7 +199,6 @@ export default function IndexPage() {
     // Catmull-Rom -> cubic Bezier for a smooth "backbone" route.
     const alpha = 1;
     const tension = 0.6;
-
     const get = (i: number) =>
       points[Math.max(0, Math.min(points.length - 1, i))];
 
@@ -230,6 +228,7 @@ export default function IndexPage() {
   const [clue, setClue] = useState("");
   const [clue2, setClue2] = useState("");
   const [clue3, setClue3] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -241,9 +240,11 @@ export default function IndexPage() {
   }, []);
 
   async function onSubmit() {
+    if (isLoading) return;
     const normalized = normalizePassword(password);
 
     try {
+      setIsLoading(true);
       const response = await fetch("/api/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -284,6 +285,8 @@ export default function IndexPage() {
       }, 10000);
     } catch (err) {
       setError("Unable to verify code. Try again.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -311,7 +314,7 @@ export default function IndexPage() {
                 d={routeD}
                 fill="none"
                 className=""
-                strokeWidth={10}
+                strokeWidth={5}
                 strokeLinecap="round"
                 strokeDasharray="16 26"
                 vectorEffect="non-scaling-stroke"
@@ -319,8 +322,8 @@ export default function IndexPage() {
               <path
                 d={routeD}
                 fill="none"
-                className="stroke-black"
-                strokeWidth={6}
+                className="stroke-white"
+                strokeWidth={3}
                 strokeLinecap="round"
                 strokeDasharray="16 26"
                 vectorEffect="non-scaling-stroke"
@@ -396,6 +399,7 @@ export default function IndexPage() {
                   }}
                   errorMessage={error ?? undefined}
                   isInvalid={Boolean(error)}
+                  isDisabled={isLoading}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") onSubmit();
                   }}
@@ -406,6 +410,15 @@ export default function IndexPage() {
                   variant="underlined"
                 />
               </div>
+              {isLoading ? (
+                <div className="text-center text-[14px] text-black/70 animate-pulse">
+                  Checking code...
+                </div>
+              ) : (
+                <div className="text-center text-[14px] text-black/70">
+                  Press Enter to submit
+                </div>
+              )}
             </div>
           </div>
         </div>
