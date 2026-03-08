@@ -88,7 +88,11 @@
 }
 
 .ls-blur-layer {
-  backdrop-filter: blur(2px);
+  backdrop-filter: none;
+}
+
+.ls-blur-off {
+  backdrop-filter: none;
 }
 
 .ls-blur-in {
@@ -127,7 +131,7 @@
 
 @keyframes ls-blur-in {
   0% {
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(0px);
   }
   50% {
     backdrop-filter: blur(12px);

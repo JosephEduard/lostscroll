@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@heroui/input";
 
 import DefaultLayout from "@/layouts/default";
-import { subtitle, title } from "@/components/primitives";
 import { fontDisplay } from "@/config/fonts";
 
 type LandShapeType =
@@ -498,7 +497,7 @@ export default function IndexPage() {
           >
             {imageClue ? (
               <div className="block w-full justify-center">
-                <div className="text-[clamp(16px,2.2vw,30px)] text-red-800 whitespace-pre-line leading-snug max-w-4xl">
+                <div className="text-[clamp(16px,2.2vw,30px)] text-red-800 whitespace-pre-line leading-snug max-w-4xl mb-4">
                   Final Clue: Carilah tempat yang sesuai dengan gambar di bawah
                   ini.
                 </div>
