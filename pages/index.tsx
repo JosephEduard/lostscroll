@@ -472,10 +472,10 @@ export default function IndexPage() {
           </div>
         </div>
 
-        <div className="absolute inset-0 z-20 flex items-center justify-center px-6 pointer-events-none">
+        <div className="absolute inset-0 z-20 flex items-center justify-center px-6 pointer-events-none isolate">
           <div
             className={
-              "absolute inset-0 transition-opacity duration-700 ease-in-out " +
+              "absolute inset-0 z-0 transition-opacity duration-700 ease-in-out " +
               (isClueVisible || zoomStage === "in"
                 ? "opacity-100"
                 : "opacity-0")
@@ -486,7 +486,7 @@ export default function IndexPage() {
           </div>
           <div
             className={
-              "text-center justify-center text-black w-full max-w-4xl max-h-[90vh] flex flex-col items-center gap-6 " +
+              "relative z-10 text-center justify-center text-black w-full max-w-4xl max-h-[90vh] flex flex-col items-center gap-6 " +
               (isClueVisible
                 ? "ls-clue-pop"
                 : zoomStage === "out"
