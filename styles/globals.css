@@ -17,6 +17,12 @@
   animation: ls-dash 10s linear infinite;
 }
 
+.ls-map-stage {
+  will-change: transform;
+  transition: transform 1200ms ease-in-out;
+  transform: translate(0, 0) scale(1);
+}
+
 @keyframes ls-dash {
   to {
     stroke-dashoffset: +220;
@@ -73,6 +79,73 @@
   animation: ls-reveal 260ms ease-out both;
 }
 
+.ls-clue-pop {
+  animation: ls-clue-pop 520ms cubic-bezier(0.2, 1, 0.2, 1) both;
+}
+
+.ls-clue-fade {
+  animation: ls-clue-fade 520ms ease-in-out both;
+}
+
+.ls-blur-layer {
+  backdrop-filter: blur(2px);
+}
+
+.ls-blur-in {
+  animation: ls-blur-in 1200ms ease-in-out both;
+}
+
+.ls-blur-out {
+  animation: ls-blur-out 700ms ease-in-out both;
+}
+
+.ls-blur-hold {
+  backdrop-filter: blur(28px);
+}
+
+@keyframes ls-clue-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ls-clue-fade {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@keyframes ls-blur-in {
+  0% {
+    backdrop-filter: blur(2px);
+  }
+  50% {
+    backdrop-filter: blur(12px);
+  }
+  100% {
+    backdrop-filter: blur(28px);
+  }
+}
+
+@keyframes ls-blur-out {
+  0% {
+    backdrop-filter: blur(28px);
+  }
+  100% {
+    backdrop-filter: blur(0px);
+  }
+}
+
 @keyframes ls-reveal {
   from {
     opacity: 0;
@@ -120,13 +193,26 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ls-route path,
+  .ls-map-stage,
   .ls-float-1,
   .ls-float-2,
   .ls-float-3,
   .ls-shake,
   .ls-reveal,
+  .ls-clue-pop,
+  .ls-blur-layer,
+  .ls-blur-in,
+  .ls-blur-out,
+  .ls-blur-hold,
   .ls-loader-pop,
   .ls-loader-exit {
     animation: none !important;
+  }
+  .ls-map-stage {
+    transition: none !important;
+    transform: none !important;
+  }
+  .ls-blur-layer {
+    backdrop-filter: none !important;
   }
 }

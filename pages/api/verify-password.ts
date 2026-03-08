@@ -11,6 +11,7 @@ type VerifyResponse = {
   clue?: string;
   clue2?: string;
   clue3?: string;
+  imageClue?: string;
 };
 
 export default async function handler(
@@ -69,8 +70,10 @@ export default async function handler(
       typeof record.clue2 === "string" ? decryptClue(record.clue2) : "";
     const clue3 =
       typeof record.clue3 === "string" ? decryptClue(record.clue3) : "";
+    const imageClue =
+      typeof record.imageclue === "string" ? decryptClue(record.imageclue) : "";
 
-    return res.status(200).json({ ok: true, clue, clue2, clue3 });
+    return res.status(200).json({ ok: true, clue, clue2, clue3, imageClue });
   } catch (error) {
     return res.status(500).json({ ok: false, message: "Server error." });
   }

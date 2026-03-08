@@ -47,7 +47,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
             width="14"
             height="14"
             rx="2"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
           />
         </svg>
@@ -57,7 +57,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M12 3.2l2.35 5.06 5.55.53-4.18 3.62 1.25 5.37L12 15.9 7.03 17.8l1.25-5.37L4.1 8.8l5.55-.53L12 3.2z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -68,7 +68,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M12 5l8 14H4L12 5z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -79,7 +79,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M7 7h10l3 12H4L7 7z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -92,7 +92,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
             cx="12"
             cy="12"
             r="7"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
           />
         </svg>
@@ -102,7 +102,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M12 4l7 8-7 8-7-8 7-8z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -113,7 +113,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M8 4h8l4 8-4 8H8l-4-8 4-8z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -124,7 +124,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M6 6l12 12M18 6l-12 12"
-            className="stroke-current text-black"
+            className="stroke-current text-white"
             strokeWidth="4"
             strokeLinecap="round"
           />
@@ -135,7 +135,7 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
         <svg {...common}>
           <path
             d="M12 4l7 5-2.7 10H7.7L5 9l7-5z"
-            className="fill-current text-black stroke-current"
+            className="fill-current text-white stroke-current"
             strokeWidth="4"
             strokeLinejoin="round"
           />
@@ -175,6 +175,8 @@ function ShapeIcon({ shape }: { shape: LandShapeType }) {
 export default function IndexPage() {
   const MAP_W = 2752;
   const MAP_H = 1536;
+  const crossFocus = { x: 2020, y: 370 };
+  const zoomScale = 1.5;
 
   const lands: Land[] = useMemo(
     () => [
@@ -228,13 +230,26 @@ export default function IndexPage() {
   const [clue, setClue] = useState("");
   const [clue2, setClue2] = useState("");
   const [clue3, setClue3] = useState("");
+  const [imageClue, setImageClue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [zoomStage, setZoomStage] = useState<"idle" | "in" | "out">("idle");
+  const [showClue, setShowClue] = useState(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const zoomTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isClueVisible = unlocked && showClue;
 
   useEffect(() => {
     return () => {
       if (unlockTimerRef.current) {
         clearTimeout(unlockTimerRef.current);
+      }
+      if (zoomTimerRef.current) {
+        clearTimeout(zoomTimerRef.current);
+      }
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
       }
     };
   }, []);
@@ -245,6 +260,7 @@ export default function IndexPage() {
 
     try {
       setIsLoading(true);
+      setPassword("");
       const response = await fetch("/api/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -261,6 +277,7 @@ export default function IndexPage() {
         clue?: string;
         clue2?: string;
         clue3?: string;
+        imageClue?: string;
       };
 
       setUnlocked(true);
@@ -268,21 +285,43 @@ export default function IndexPage() {
       setClue(data.clue ?? "");
       setClue2(data.clue2 ?? "");
       setClue3(data.clue3 ?? "");
+      setImageClue(data.imageClue ?? "");
+      setShowClue(false);
+      setZoomStage("in");
+
+      if (zoomTimerRef.current) {
+        clearTimeout(zoomTimerRef.current);
+      }
+
+      zoomTimerRef.current = setTimeout(() => {
+        setShowClue(true);
+      }, 1200);
 
       if (unlockTimerRef.current) {
         clearTimeout(unlockTimerRef.current);
       }
 
       unlockTimerRef.current = setTimeout(() => {
-        setUnlocked(false);
-        setPassword("");
-        setError(null);
-        setAttempt(0);
-        setClue("");
-        setClue2("");
-        setClue3("");
-        window.location.reload();
-      }, 10000);
+        setShowClue(false);
+        setZoomStage("out");
+
+        if (resetTimerRef.current) {
+          clearTimeout(resetTimerRef.current);
+        }
+
+        resetTimerRef.current = setTimeout(() => {
+          setZoomStage("idle");
+          setUnlocked(false);
+          setPassword("");
+          setError(null);
+          setAttempt(0);
+          setClue("");
+          setClue2("");
+          setClue3("");
+          setImageClue("");
+          window.location.reload();
+        }, 1200);
+      }, 15000);
     } catch (err) {
       setError("Unable to verify code. Try again.");
     } finally {
@@ -294,82 +333,91 @@ export default function IndexPage() {
     <DefaultLayout>
       <section className="relative w-screen h-screen overflow-hidden bg-default-50 text-black">
         <div className="absolute inset-0">
-          <svg
-            className="absolute inset-0 h-full w-full"
-            viewBox={`0 0 ${MAP_W} ${MAP_H}`}
-            preserveAspectRatio="xMidYMid slice"
-            aria-hidden="true"
+          <div
+            className="absolute inset-0 h-full w-full ls-map-stage"
+            style={{
+              transformOrigin: "50% 50%",
+              transform:
+                zoomStage === "in" ? `scale(${zoomScale})` : "scale(1)",
+            }}
           >
-            <image
-              href="/map-japan-3d.png"
-              xlinkHref="/map-japan-3d.png"
-              width={MAP_W}
-              height={MAP_H}
+            <svg
+              className="absolute inset-0 h-full w-full"
+              viewBox={`0 0 ${MAP_W} ${MAP_H}`}
               preserveAspectRatio="xMidYMid slice"
-              style={{ pointerEvents: "none" }}
-            />
-
-            <g className="ls-route" style={{ pointerEvents: "none" }}>
-              <path
-                d={routeD}
-                fill="none"
-                className=""
-                strokeWidth={5}
-                strokeLinecap="round"
-                strokeDasharray="16 26"
-                vectorEffect="non-scaling-stroke"
+              aria-hidden="true"
+            >
+              <image
+                href="/map-japan-3d.png"
+                xlinkHref="/map-japan-3d.png"
+                width={MAP_W}
+                height={MAP_H}
+                preserveAspectRatio="xMidYMid slice"
+                style={{ pointerEvents: "none" }}
               />
-              <path
-                d={routeD}
-                fill="none"
-                className="stroke-white"
-                strokeWidth={3}
-                strokeLinecap="round"
-                strokeDasharray="16 26"
-                vectorEffect="non-scaling-stroke"
-              />
-            </g>
 
-            {lands.map((land, idx) => {
-              const floatClass = `ls-float-${(idx % 3) + 1}`;
-              const markerSize = 96;
-              const cardSize = 64;
-              const dotAnchorY = cardSize - 2;
+              <g className="ls-route" style={{ pointerEvents: "none" }}>
+                <path
+                  d={routeD}
+                  fill="none"
+                  className=""
+                  strokeWidth={5}
+                  strokeLinecap="round"
+                  strokeDasharray="16 26"
+                  vectorEffect="non-scaling-stroke"
+                />
+                <path
+                  d={routeD}
+                  fill="none"
+                  className="stroke-black"
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  strokeDasharray="16 26"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </g>
 
-              return (
-                <foreignObject
-                  key={land.id}
-                  x={land.x - markerSize / 2}
-                  y={land.y - dotAnchorY}
-                  width={markerSize}
-                  height={markerSize}
-                  overflow="visible"
-                >
-                  <div className="relative h-full w-full">
-                    <button
-                      type="button"
-                      className={
-                        "absolute left-1/2 top-0 -translate-x-1/2 group outline-none " +
-                        floatClass +
-                        " transition-transform duration-200 hover:scale-[1.03]"
-                      }
-                    >
-                      <div className={"relative grid place-items-center  "}>
-                        <ShapeIcon shape={land.shape} />
-                        <span
-                          className={
-                            "absolute -bottom-2 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full " +
-                            "bg-black"
-                          }
-                          aria-hidden="true"
-                        />
-                      </div>
-                    </button>
-                  </div>
-                </foreignObject>
-              );
-            })}
-          </svg>
+              {lands.map((land, idx) => {
+                const floatClass = `ls-float-${(idx % 3) + 1}`;
+                const markerSize = 96;
+                const cardSize = 64;
+                const dotAnchorY = cardSize - 2;
+
+                return (
+                  <foreignObject
+                    key={land.id}
+                    x={land.x - markerSize / 2}
+                    y={land.y - dotAnchorY}
+                    width={markerSize}
+                    height={markerSize}
+                    overflow="visible"
+                  >
+                    <div className="relative h-full w-full">
+                      <button
+                        type="button"
+                        className={
+                          "absolute left-1/2 top-0 -translate-x-1/2 group outline-none " +
+                          floatClass +
+                          " transition-transform duration-200 hover:scale-[1.03]"
+                        }
+                      >
+                        <div className="relative grid place-items-center">
+                          <ShapeIcon shape={land.shape} />
+                          <span
+                            className={
+                              "absolute -bottom-2 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full " +
+                              "bg-black"
+                            }
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </button>
+                    </div>
+                  </foreignObject>
+                );
+              })}
+            </svg>
+          </div>
         </div>
 
         <div className="absolute inset-x-0 left-20 top-45 z-20 flex justify-left px-4 pointer-events-none">
@@ -404,7 +452,7 @@ export default function IndexPage() {
                     if (e.key === "Enter") onSubmit();
                   }}
                   onValueChange={setPassword}
-                  placeholder="Input Code Here"
+                  placeholder={unlocked ? "" : "Input Code Here"}
                   type="text"
                   value={password}
                   variant="underlined"
@@ -414,6 +462,8 @@ export default function IndexPage() {
                 <div className="text-center text-[14px] text-black/70 animate-pulse">
                   Checking code...
                 </div>
+              ) : unlocked ? (
+                <div className="h-[20px]" aria-hidden="true" />
               ) : (
                 <div className="text-center text-[14px] text-black/70">
                   Press Enter to submit
@@ -423,22 +473,47 @@ export default function IndexPage() {
           </div>
         </div>
 
-        <div className="absolute right-25 top-100 z-20 w-full max-w-md px-0 pointer-events-none">
+        <div className="absolute inset-0 z-20 flex items-center justify-center px-6 pointer-events-none">
           <div
             className={
-              "text-center justify-center text-black " +
-              (unlocked ? "ls-reveal" : "opacity-0 pointer-events-none")
+              "absolute inset-0 transition-opacity duration-700 ease-in-out " +
+              (isClueVisible || zoomStage === "in"
+                ? "opacity-100"
+                : "opacity-0")
             }
-            aria-hidden={!unlocked}
+            aria-hidden="true"
           >
-            <div className="text-[24px] text-black whitespace-pre-line">
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-2xl" />
+          </div>
+          <div
+            className={
+              "text-center justify-center text-black w-full max-w-4xl max-h-[90vh] flex flex-col items-center gap-6 " +
+              (isClueVisible
+                ? "ls-clue-pop"
+                : zoomStage === "out"
+                  ? "ls-clue-fade"
+                  : "opacity-0 pointer-events-none")
+            }
+            aria-hidden={!isClueVisible}
+          >
+            {imageClue ? (
+              <div className="block w-full justify-center">
+                <div className="text-[clamp(16px,2.2vw,30px)] text-red-800 whitespace-pre-line leading-snug max-w-4xl">
+                  Final Clue: Carilah tempat yang sesuai dengan gambar di bawah
+                  ini.
+                </div>
+                <img
+                  src={imageClue}
+                  alt="Clue"
+                  className="max-h-[75vh] w-full max-w-6xl rounded-2xl object-contain"
+                />
+              </div>
+            ) : null}
+            <div className="text-[clamp(16px,2.2vw,24px)] text-white whitespace-pre-line leading-snug max-w-4xl">
               {clue}
             </div>
-            <div className="text-[24px] mt-3 text-black whitespace-pre-line">
+            <div className="text-[clamp(16px,2.2vw,24px)] text-white whitespace-pre-line leading-snug max-w-4xl">
               {clue2}
-            </div>
-            <div className="text-[24px] mt-20 text-black whitespace-pre-line">
-              {clue3}
             </div>
           </div>
         </div>
